@@ -1,4 +1,3 @@
-# asesmen2_0058_mopro
 ## Asesmen 2 Mopro
 Nama    : Abraham Putra Berman Simbolon  
 NIM     : 607062300058  
