@@ -18,10 +18,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -35,6 +38,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -50,10 +56,10 @@ import androidx.navigation.compose.rememberNavController
 import com.abrahamputra0058.asesmen2.R
 import com.abrahamputra0058.asesmen2.navigation.Screen
 import com.abrahamputra0058.asesmen2.ui.model.Agenda
-import com.abrahamputra0058.asesmen2.ui.model.MainViewModel
 import com.abrahamputra0058.asesmen2.ui.theme.Asesmen2Theme
 import com.abrahamputra0058.asesmen2.util.SettingsDataStore
 import com.abrahamputra0058.asesmen2.util.ViewModelFactory
+import com.abrahamputra0058.asesmen2.util.formatDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,6 +69,8 @@ import kotlinx.coroutines.launch
 fun MainScreen(navController: NavHostController){
     val dataStore = SettingsDataStore(LocalContext.current)
     val showList by dataStore.layoutFlow.collectAsState(true)
+
+    var expanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -75,6 +83,46 @@ fun MainScreen(navController: NavHostController){
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
                 actions = {
+                    IconButton(onClick = { expanded = true }) {
+                        Icon(Icons.Default.MoreVert, contentDescription = )
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    if (showList) stringResource(R.string.grid)
+                                    else stringResource(R.string.list)
+                                )
+                            },
+                            onClick = {
+                                expanded = false
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    dataStore.saveLayout(!showList)
+                                }
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.about_app)) },
+                            onClick = {
+                                expanded = false
+                                navController.navigate(Screen.About.route)
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.recycle_bin)) },
+                            onClick = {
+                                expanded = false
+                                navController.navigate(Screen.RecycleBin.route)
+                            }
+                        )
+                    }
+
                     IconButton(onClick = {
                         CoroutineScope(Dispatchers.IO).launch {
                             dataStore.saveLayout(!showList)
@@ -164,11 +212,6 @@ fun ScreenContent(showList: Boolean, modifier: Modifier = Modifier, navControlle
                 }
             }
         }
-//        Text(
-//            text = stringResource(R.string.intro_app),
-//            style = MaterialTheme.typography.bodyLarge,
-//            modifier = Modifier.padding(16.dp)
-//        )
     }
 }
 
@@ -180,13 +223,6 @@ fun ListItem(agenda: Agenda) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-//        Image(
-//            painter = painterResource(agenda.imageResId),
-//            contentDescription = stringResource(R.string.image_name, agenda.tipe),
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier.size(24.dp)
-//
-//        )
         Text(
             text = agenda.judul,
             maxLines = 1,
@@ -194,7 +230,7 @@ fun ListItem(agenda: Agenda) {
             fontWeight = FontWeight.Bold
         )
         Text(text = agenda.tipe)
-        Text(text = agenda.tanggal)
+        Text(text = formatDate(agenda.tanggal))
         Text(text = agenda.waktu)
         Text(
             text = agenda.deskripsi,
@@ -219,13 +255,6 @@ fun GridItem(agenda: Agenda, onClick: () -> Unit) {
                 .padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-//        Image(
-//            painter = painterResource(agenda.imageResId),
-//            contentDescription = stringResource(R.string.image_name, agenda.tipe),
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier.size(24.dp)
-//
-//        )
             Text(
                 text = agenda.judul,
                 maxLines = 2,
@@ -233,7 +262,7 @@ fun GridItem(agenda: Agenda, onClick: () -> Unit) {
                 fontWeight = FontWeight.Bold
             )
             Text(text = agenda.tipe)
-            Text(text = agenda.tanggal)
+            Text(text = formatDate(agenda.tanggal))
             Text(text = agenda.waktu)
             Text(
                 text = agenda.deskripsi,

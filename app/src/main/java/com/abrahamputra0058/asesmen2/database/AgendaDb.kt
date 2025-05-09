@@ -4,9 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.abrahamputra0058.asesmen2.ui.model.Agenda
+import com.abrahamputra0058.asesmen2.util.Converters
 
 @Database(entities = [Agenda::class], version = 1, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class AgendaDb : RoomDatabase() {
     abstract  val dao : AgendaDao
 

@@ -11,10 +11,11 @@ data class Agenda(
     val id: Long = 0L,
     val judul: String,
     val tipe: String,
-    val tanggal: String,
-    val waktu: String,
+    val tanggal: Long = System.currentTimeMillis(),
+    val waktu: String = "00:00",
     val deskripsi: String,
+    val isDeleted: Boolean = false
 
-//    Untuk menambahkan gambar pada tiap kategori agenda
+////    Untuk menambahkan gambar pada tiap kategori agenda
 //    @DrawableRes val imageResId: Int
 )

@@ -1,31 +1,50 @@
 <resources>
-    <string name="app_name">Asesment1 - Demo App</string>
+    <string name="app_name">Asesment 2 - PlanWell</string>
     <string name="about_app">Tentang Aplikasi</string>
+    <string name="menu">Menu</string>
 
     <!--    Intent-->
     <string name="share">Bagikan</string>
     <string name="template_share">Hei, saya telah membuat agenda untukmu, lihat ini! Tanggal: %1$s | Waktu: %2$s, Jenis agenda: %3$s, Judul Agenda: %4$s, Detail: %5$s</string>
 
     <!--    App-->
-    <string name="content_about">PlanWell adalah aplikasi untuk mengatur jadwal harian, seperti jadwal kelas, tenggat tugas, atau pengingat lainnya. Mari mulai mencatat jadwalmu agar tidak lupa! Aplikasi ini memungkinkan pengguna membuat satu catatan. Catatan tidak dapat disimpan, tetapi dapat langsung dibagikan setelah dibuat, jika diinginkan.</string>
+    <string name="content_about">PlanWell adalah aplikasi untuk mengatur jadwal harian, seperti jadwal kelas, tenggat tugas, atau pengingat lainnya. Mari mulai mencatat jadwalmu agar tidak lupa!</string>
     <string name="back">Kembali</string>
     <string name="intro_app">Tampilan di bawah ini menunjukkan daftar yang dapat digulir.</string>
     <string name="intro_add">Silakan isi formulir ini untuk membuat agenda.</string>
     <string name="empty_list">Belum ada agenda yang dibuat.</string>
     <string name="image_name">Gambar: %1$s</string>
-    <string name="input_invalid">Tidak boleh kosong</string>
+    <string name="input_invalid">Judul dan Deskripsi tidak boleh kosong</string>
     <string name="add_agenda">Tambah Agenda</string>
     <string name="title_agenda">Judul Agenda</string>
     <string name="type_agenda">Jenis Agenda</string>
     <string name="date_agenda">Tanggal Agenda</string>
     <string name="time_agenda">Waktu Agenda</string>
     <string name="select_time">Pilih waktu untuk agenda Anda</string>
+    <string name="select_date">Pilih tanggal untuk agenda Anda</string>
+    <string name="none">Tidak ada</string>
     <string name="course">Kuliah</string>
     <string name="task">Tugas</string>
     <string name="other">Lainnya</string>
     <string name="description">Deskripsi</string>
     <string name="ph_description">Jelaskan agenda Anda agar bisa mengingatnya nanti...</string>
-    <string name="note">Catatan</string>
+<!--    Sama kayak simpan-->
+    <string name="note">Catat</string>
+    <string name="save">Simpan</string>
+    <string name="edit_note">Ubah Agenda</string>
+    <string name="other_menu">Lainnya</string>
+    <string name="delete">Hapus agenda</string>
+<!--    Delete -->
+    <string name="delete_message">Hapus agenda ini?</string>
+    <string name="delete_button">Hapus</string>"
+    <string name="cancel_button">Batal</string>
+<!--    Preferences -->
+    <string name="list">Tampilan List</string>
+    <string name="grid">Tampilan Grid</string>
+<!--Recycle Bin-->
+    <string name="recycle_bin">Sampah</string>
+    <string name="empty_recycle_bin">Sampah masih kosong</string>
+
 
     <!--    Show the note-->
     <string name="date_time_note">Tanggal: %1$s | Waktu: %2$s</string>

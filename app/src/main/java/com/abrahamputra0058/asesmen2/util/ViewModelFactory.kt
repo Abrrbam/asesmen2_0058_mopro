@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.abrahamputra0058.asesmen2.database.AgendaDb
-import com.abrahamputra0058.asesmen2.ui.model.DetailViewModel
-import com.abrahamputra0058.asesmen2.ui.model.MainViewModel
+import com.abrahamputra0058.asesmen2.ui.screen.DetailViewModel
+import com.abrahamputra0058.asesmen2.ui.screen.MainViewModel
 
 class ViewModelFactory(
     private val context: Context

@@ -36,6 +36,10 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()){
             val id = navBackStackEntry.arguments?.getLong(KEY_ID_AGENDA)
             DetailAgendaScreen(navController, id)
         }
+        composable(route = Screen.RecycleBin.route){
+            RecycleBinScreen(navController)
+        }
+
 
     }
 }

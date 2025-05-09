@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Asesmen 2</string>
+    <string name="about_app">About App</string>
+    <string name="menu">Menu</string>
+    <string name="share">Share</string>
+    <string name="template_share">"Hey, I've created an agenda for you, check this out! Date: %1$s | Time: %2$s | Agenda Type: %3$s | Agenda Title: %4$s | Details: %5$s "</string>
+    <string name="content_about">PlanWell is an app for managing daily schedules, such as class schedules, assignment deadlines, or other reminders. Start recording your schedule now so you won’t forget!</string>
+    <string name="back">Back</string>
+    <string name="intro_app">The display below shows a scrollable list.</string>
+    <string name="intro_add">Please fill out this form to create an agenda.</string>
+    <string name="empty_list">No agenda has been created yet.</string>
+    <string name="image_name">Image: %1$s</string>
+    <string name="input_invalid">Cannot be empty</string>
+    <string name="add_agenda">Add Agenda</string>
+    <string name="title_agenda">"Agenda Title "</string>
+    <string name="type_agenda">"Agenda Type "</string>
+    <string name="date_agenda">Agenda Date</string>
+    <string name="time_agenda">"Agenda Time "</string>
+    <string name="select_time">Select a time for your agenda</string>
+    <string name="select_date">Select the date for your agenda</string>
+    <string name="none">None</string>
+    <string name="course">"Lecture "</string>
+    <string name="task">Assignment</string>
+    <string name="other">Other</string>
+    <string name="description">Description</string>
+    <string name="ph_description">"Describe your agenda so you can remember it later... "</string>
+    <string name="note">Note</string>
+    <string name="save">Save</string>
+    <string name="edit_note">Edit Agenda</string>
+    <string name="other_menu">Other option menu</string>
+    <string name="delete">Delete agenda</string>
+    <string name="delete_message">Delete this agenda?</string>
+    <string name="delete_button">Delete</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="list">List View</string>
+    <string name="grid">Grid View</string>
+    <string name="empty_recycle_bin">Recycle Bin is empty</string>
+    <string name="date_time_note">Date: %1$s | Time: %2$s</string>
+    <string name="type_note">Type: %1$s</string>
+    <string name="title_note">Title: %1$s</string>
+    <string name="description_note">Description: %1$s</string>
+    <string name="recycle_bin">Recycle Bin</string>
+</resources>
