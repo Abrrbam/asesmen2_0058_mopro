@@ -6,9 +6,6 @@ import com.abrahamputra0058.asesmen2.database.AgendaDao
 import com.abrahamputra0058.asesmen2.ui.model.Agenda
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class DetailViewModel(private val dao: AgendaDao) : ViewModel() {
 //    private val formatter = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
@@ -40,7 +37,6 @@ class DetailViewModel(private val dao: AgendaDao) : ViewModel() {
             waktu = waktu,
             deskripsi = deskripsi
         )
-
         viewModelScope.launch(Dispatchers.IO) {
             dao.update(agenda)
         }
@@ -48,19 +44,7 @@ class DetailViewModel(private val dao: AgendaDao) : ViewModel() {
 
     fun delete(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            dao.deleteById(id)
+            dao.moveToDeleted(id)
         }
     }
-
-    suspend fun moveToDeleted(agenda: Agenda) {
-        val updatedAgenda = agenda.copy(isDeleted = true)
-        dao.update(updatedAgenda)
-
-    }
-
-    suspend fun restoreFromDeleted(agenda: Agenda) {
-        val updatedAgenda = agenda.copy(isDeleted = false)
-        dao.update(updatedAgenda)
-    }
-
 }

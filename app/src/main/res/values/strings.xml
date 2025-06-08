@@ -42,9 +42,15 @@
     <string name="list">Tampilan List</string>
     <string name="grid">Tampilan Grid</string>
 <!--Recycle Bin-->
-    <string name="recycle_bin">Sampah</string>
+    <string name="recycle_bin">Tempat Sampah</string>
     <string name="empty_recycle_bin">Sampah masih kosong</string>
+<!--Active List-->
+    <string name="agenda_list">Daftar Agenda</string>
 
+<!--    Action Recycle Bin Dialog-->
+    <string name="action_recycle_bin">Ingin menghapus permanen agenda atau pulihkan?</string>
+    <string name="delete_permanent">Hapus permanen</string>
+    <string name="restore">Pulihkan</string>
 
     <!--    Show the note-->
     <string name="date_time_note">Tanggal: %1$s | Waktu: %2$s</string>

@@ -36,9 +36,13 @@
     <string name="list">List View</string>
     <string name="grid">Grid View</string>
     <string name="empty_recycle_bin">Recycle Bin is empty</string>
+    <string name="agenda_list">List Agenda</string>
+    <string name="restore">Recover</string>
     <string name="date_time_note">Date: %1$s | Time: %2$s</string>
     <string name="type_note">Type: %1$s</string>
     <string name="title_note">Title: %1$s</string>
     <string name="description_note">Description: %1$s</string>
     <string name="recycle_bin">Recycle Bin</string>
+    <string name="action_recycle_bin">Delete permanent or recover the agenda?</string>
+    <string name="delete_permanent">Delete permanent</string>
 </resources>

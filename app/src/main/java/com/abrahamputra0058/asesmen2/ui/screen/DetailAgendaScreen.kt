@@ -34,7 +34,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
-import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
@@ -42,6 +41,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -81,12 +81,11 @@ fun DetailAgendaScreen(navController: NavHostController, id: Long? = null) {
 
     var judul by rememberSaveable { mutableStateOf("") }
     var deskripsi by rememberSaveable { mutableStateOf("") }
-    var selectedDate by rememberSaveable { mutableStateOf(System.currentTimeMillis()) }
+    var selectedDate by rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
     var selectedTypeOptionText by rememberSaveable { mutableStateOf(agendaTypeOptions.first()) }
     var selectedTime by rememberSaveable { mutableStateOf("00:00") }
 
     var showDialog by remember { mutableStateOf(false) }
-
 
     LaunchedEffect(Unit) {
         if (id == null) return@LaunchedEffect
@@ -97,7 +96,6 @@ fun DetailAgendaScreen(navController: NavHostController, id: Long? = null) {
         selectedTypeOptionText = data.tipe
         selectedTime = data.waktu
     }
-
 
     Scaffold(
         topBar = {
@@ -154,25 +152,19 @@ fun DetailAgendaScreen(navController: NavHostController, id: Long? = null) {
                         }
                         navController.popBackStack()
                     }) {
-
-                        /* Langkah selanjutnya:
-                           1. Tambahkan fungsi soft delete (recycle bin) di DetailViewModel dan Repository.
-                           2. Ubah fungsi delete di DetailViewModel agar melakukan soft delete (menandai data sebagai terhapus secara logis).
-                           3. Di DaftarAgendaScreen, tambahkan opsi untuk melihat data yang terhapus di recycle bin.
-                           4. Di recycle bin, tambahkan fungsi untuk restore data yang terhapus.
-                         */
                         Icon(
                             imageVector = Icons.Outlined.Check,
                             contentDescription = stringResource(R.string.save),
                             tint = MaterialTheme.colorScheme.primary
-
                         )
                     }
-
 //                    DeleteAction in actions
                     if (id != null) {
                         DeleteAction {
                             showDialog = true
+//                                Hanya soft-delete
+                                viewModel.delete(id)
+                                navController.popBackStack()
                         }
                     }
                 }
@@ -180,45 +172,34 @@ fun DetailAgendaScreen(navController: NavHostController, id: Long? = null) {
         }
     ) { innerPadding ->
         FormDetailAgenda(
+            Modifier.padding(innerPadding),
             title = judul,
             onTitleChange = { judul = it },
             description = deskripsi,
             onDescChange = { deskripsi = it },
-            agendaTypeOptions = agendaTypeOptions,
+            agendaTypeOptions = agendaTypeOptions, //Menyimpan opsi yang sumbernya di DetailAgendaScreen
             selectedTypeOptionText = selectedTypeOptionText,
+            onSelectedTypeChange = { selectedTypeOptionText = it },
             selectedDate = selectedDate,
 //            selectedTime = selectedTime,
             onTimeChange = { selectedTime = it },
-            Modifier.padding(innerPadding)
+
         )
-        if (id != null && showDialog) {
-//            Tampilkan alert dialog hapus
-            DisplayAlertDialog(onDismissRequest = { showDialog = false }) {
-                showDialog = false
-                viewModel.delete(id)
-                navController.popBackStack()
-            }
-        }
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormDetailAgenda(
+    modifier: Modifier = Modifier,
     title: String, onTitleChange: (String) -> Unit = {},
     description: String, onDescChange: (String) -> Unit = {},
     agendaTypeOptions: List<String> = listOf(),
     selectedTypeOptionText: String,
+    onSelectedTypeChange: (String) -> Unit = {}, //Supaya bisa berubah nilai dropdown
     selectedDate: Long? = null,
 //    selectedTime: String = "00:00",
-    onTimeChange: (String) -> Unit = {},
-    modifier: Modifier = Modifier
+    onTimeChange: (String) -> Unit = {}
 ) {
-
-//    Implicit intent
-//    val context = LocalContext.current
-
     var judulError by rememberSaveable { mutableStateOf(false) }
     var deskripsiError by remember { mutableStateOf(false) }
     var dateError by remember { mutableStateOf(false) }
@@ -241,7 +222,7 @@ fun FormDetailAgenda(
         DropdownTypeAgenda(
             options = agendaTypeOptions,
             selectedType = selectedTypeOptionText,
-            onOptionSelected = { selectedTypeOptionText }
+            onOptionSelected = { onSelectedTypeChange(it) }
         )
 
 //        Judul agenda
@@ -287,75 +268,16 @@ fun FormDetailAgenda(
             ),
             modifier = Modifier.fillMaxWidth(), maxLines = 5
         )
-
-////        Button Note
-//        Button(
-//            onClick = {
-//                judulError = (title == "" || title == "0")
-//                deskripsiError = (description == "" || description == "0")
-//                timeError = selectedTime.isBlank()
-//
-//                dateError = (selectedDate == null)
-//
-//                if (judulError || deskripsiError || dateError) return@Button
-//            },
-//            modifier = modifier.padding(top = 4.dp),
-//            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 4.dp)
-//        ) {
-//            Text(text = stringResource(R.string.note))
-//        }
-//
-//        if (!judulError && selectedDate != null && selectedTime.isNotBlank()) {
-//            HorizontalDivider(
-//                modifier = Modifier.padding(vertical = 8.dp), thickness = 1.dp
-//            )
-//
-////            Tampilkan selectedDate, selectedTime, selectedTypeOptionText agenda, judul, dan deskripsi/detail
-//            Text(
-//                text = stringResource(
-//                    R.string.date_time_note,
-//                    convertMillisToDate(selectedDate),
-//                    selectedTime
-//                ),
-//                style = MaterialTheme.typography.headlineMedium
-//            )
-//            Text(
-//                text = stringResource(R.string.type_note, selectedTypeOptionText),
-//                style = MaterialTheme.typography.labelLarge
-//            )
-//            Text(
-//                text = stringResource(R.string.title_note, title),
-//                style = MaterialTheme.typography.bodyMedium
-//            )
-//            Text(
-//                text = stringResource(R.string.description_note, description),
-//                style = MaterialTheme.typography.bodyMedium
-//            )
-
-//            Share/ Implicit intent
-//            Button(
-//                onClick = {
-//                    shareAgenda(
-//                        context = context,
-//                        message = context.getString(R.string.template_share, convertMillisToDate(selectedDate!!), selectedTime, selectedTypeOptionText, judul, deskripsi)
-//                    )
-//                },
-//                modifier = Modifier.padding(8.dp),
-//                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp)
-//            ) {
-//                Text(text = stringResource(R.string.share))
-//            }
         }
-
     }
-
 //Date picker
 @Composable
 fun DatePickerFieldToModal(
+    modifier: Modifier = Modifier,
     selectedDate: Long?,
     onDateChange: (Long?) -> Unit = {},
     isError: Boolean,
-    modifier: Modifier = Modifier
+
 ) {
 
     var showModal by remember { mutableStateOf(false) }
@@ -491,6 +413,8 @@ fun ErrorHint(isError: Boolean) {
         Text(text = stringResource(R.string.input_invalid))
 }
 
+
+//Hapus lewat "TextButton"
 @Composable
 fun DeleteAction(delete: () -> Unit) {
     var expanded by remember { mutableStateOf(false) }
@@ -509,13 +433,6 @@ fun DeleteAction(delete: () -> Unit) {
                 onClick = {
                     expanded = false
                     delete()
-                }
-            )
-            DropdownMenuItem(
-                text = { Text(text = stringResource(R.string.share)) },
-                onClick = {
-                    expanded = false
-//                    fungsi bagikan
                 }
             )
         }

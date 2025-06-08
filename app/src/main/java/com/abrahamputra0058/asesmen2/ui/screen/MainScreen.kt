@@ -19,7 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DividerDefaults
@@ -83,46 +82,6 @@ fun MainScreen(navController: NavHostController){
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
                 actions = {
-                    IconButton(onClick = { expanded = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = )
-                    }
-
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    if (showList) stringResource(R.string.grid)
-                                    else stringResource(R.string.list)
-                                )
-                            },
-                            onClick = {
-                                expanded = false
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    dataStore.saveLayout(!showList)
-                                }
-                            }
-                        )
-
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.about_app)) },
-                            onClick = {
-                                expanded = false
-                                navController.navigate(Screen.About.route)
-                            }
-                        )
-
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.recycle_bin)) },
-                            onClick = {
-                                expanded = false
-                                navController.navigate(Screen.RecycleBin.route)
-                            }
-                        )
-                    }
-
                     IconButton(onClick = {
                         CoroutineScope(Dispatchers.IO).launch {
                             dataStore.saveLayout(!showList)
@@ -141,12 +100,31 @@ fun MainScreen(navController: NavHostController){
                         )
                     }
 
-//                    Tombol info
-                    IconButton(onClick = {navController.navigate(Screen.About.route)}) {
+                    IconButton(onClick = { expanded = true }) {
                         Icon(
-                            imageVector = Icons.Outlined.Info,
-                            contentDescription =  stringResource(R.string.about_app),
-                            tint = MaterialTheme.colorScheme.primary
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = stringResource(R.string.menu)
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.about_app)) },
+                            onClick = {
+                                expanded = false
+                                navController.navigate(Screen.About.route)
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.recycle_bin)) },
+                            onClick = {
+                                expanded = false
+                                navController.navigate(Screen.RecycleBin.route)
+                            }
                         )
                     }
                 }
@@ -193,7 +171,9 @@ fun ScreenContent(showList: Boolean, modifier: Modifier = Modifier, navControlle
                 contentPadding = PaddingValues(bottom = 84.dp)
             ) {
                 items(data) {
-                    ListItem(agenda = it)
+                    ListItem(agenda = it){
+                        navController.navigate(Screen.FormEdit.withId(it.id))
+                    }
                     HorizontalDivider()
                 }
             }
@@ -216,10 +196,10 @@ fun ScreenContent(showList: Boolean, modifier: Modifier = Modifier, navControlle
 }
 
 @Composable
-fun ListItem(agenda: Agenda) {
+fun ListItem(agenda: Agenda, onClick: () -> Unit) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth().clickable { onClick() }
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -272,16 +252,6 @@ fun GridItem(agenda: Agenda, onClick: () -> Unit) {
         }
     }
 }
-
-//private fun shareAgenda(context: Context, message: String){
-//    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-//        type = "text/plain"
-//        putExtra(Intent.EXTRA_TEXT, message)
-//    }
-//    if (shareIntent.resolveActivity(context.packageManager) != null) {
-//        context.startActivity(shareIntent)
-//    }
-//}
 
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)

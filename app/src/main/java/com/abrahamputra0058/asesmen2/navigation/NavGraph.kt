@@ -11,6 +11,7 @@ import com.abrahamputra0058.asesmen2.ui.screen.AboutScreen
 import com.abrahamputra0058.asesmen2.ui.screen.DetailAgendaScreen
 import com.abrahamputra0058.asesmen2.ui.screen.KEY_ID_AGENDA
 import com.abrahamputra0058.asesmen2.ui.screen.MainScreen
+import com.abrahamputra0058.asesmen2.ui.screen.RecycleBinScreen
 
 @Composable
 fun SetupNavGraph(navController: NavHostController = rememberNavController()){
