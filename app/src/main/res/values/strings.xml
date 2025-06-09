@@ -14,12 +14,12 @@
     <string name="intro_add">Silakan isi formulir ini untuk membuat agenda.</string>
     <string name="empty_list">Belum ada agenda yang dibuat.</string>
     <string name="image_name">Gambar: %1$s</string>
-    <string name="input_invalid">Judul dan Deskripsi tidak boleh kosong</string>
+    <string name="input_invalid">Judul, tanggal, dan deskripsi tidak boleh kosong</string>
     <string name="add_agenda">Tambah Agenda</string>
     <string name="title_agenda">Judul Agenda</string>
     <string name="type_agenda">Jenis Agenda</string>
     <string name="date_agenda">Tanggal Agenda</string>
-    <string name="time_agenda">Waktu Agenda</string>
+    <string name="time_agenda">Waktu Agenda: %1$s</string>
     <string name="select_time">Pilih waktu untuk agenda Anda</string>
     <string name="select_date">Pilih tanggal untuk agenda Anda</string>
     <string name="none">Tidak ada</string>

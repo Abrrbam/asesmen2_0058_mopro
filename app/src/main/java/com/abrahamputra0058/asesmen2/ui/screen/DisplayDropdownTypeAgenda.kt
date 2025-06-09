@@ -28,7 +28,8 @@ fun DropdownTypeAgenda(
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
+        onExpandedChange = { expanded = !expanded },
+
     ) {
         TextField(
             value = selectedType,

@@ -9,8 +9,8 @@ data class Agenda(
     val id: Long = 0L,
     val judul: String,
     val tipe: String,
-    val tanggal: Long = System.currentTimeMillis(),
-    val waktu: String = "00:00",
+    val tanggal: Long?,
+    val waktu: String,
     val deskripsi: String,
     val isDeleted: Boolean = false
 )

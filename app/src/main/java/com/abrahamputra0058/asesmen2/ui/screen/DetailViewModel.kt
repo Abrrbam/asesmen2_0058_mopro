@@ -8,9 +8,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class DetailViewModel(private val dao: AgendaDao) : ViewModel() {
-//    private val formatter = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
-    fun insert(judul: String, tipe: String, tanggal: Long, waktu: String, deskripsi: String) {
+    fun insert(judul: String, tipe: String, tanggal: Long?, waktu: String, deskripsi: String) {
         val agenda = Agenda(
             judul = judul,
             tipe = tipe,
@@ -28,7 +27,7 @@ class DetailViewModel(private val dao: AgendaDao) : ViewModel() {
         return dao.getAgendaById(id)
     }
 
-    fun update(id: Long, judul: String, tipe: String, tanggal: Long , waktu: String, deskripsi: String) {
+    fun update(id: Long, judul: String, tipe: String, tanggal: Long? , waktu: String, deskripsi: String) {
         val agenda = Agenda(
             id = id,
             judul = judul,

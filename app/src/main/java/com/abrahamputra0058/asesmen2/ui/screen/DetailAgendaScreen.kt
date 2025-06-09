@@ -1,10 +1,6 @@
 package com.abrahamputra0058.asesmen2.ui.screen
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,15 +37,12 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -81,9 +74,9 @@ fun DetailAgendaScreen(navController: NavHostController, id: Long? = null) {
 
     var judul by rememberSaveable { mutableStateOf("") }
     var deskripsi by rememberSaveable { mutableStateOf("") }
-    var selectedDate by rememberSaveable { mutableLongStateOf(System.currentTimeMillis()) }
+    var selectedDate by rememberSaveable { mutableStateOf<Long?>(null) }
     var selectedTypeOptionText by rememberSaveable { mutableStateOf(agendaTypeOptions.first()) }
-    var selectedTime by rememberSaveable { mutableStateOf("00:00") }
+    var selectedTime by rememberSaveable { mutableStateOf("") }
 
     var showDialog by remember { mutableStateOf(false) }
 
@@ -125,7 +118,7 @@ fun DetailAgendaScreen(navController: NavHostController, id: Long? = null) {
                 actions = {
                     IconButton(onClick = {
 //                        Sanity Check
-                        if (judul.isBlank() || deskripsi.isBlank()) {
+                        if (judul.isBlank() || deskripsi.isBlank() || selectedDate == null || selectedTime == "") {
                             Toast.makeText(context, R.string.input_invalid, Toast.LENGTH_LONG)
                                 .show()
                             return@IconButton
@@ -162,9 +155,9 @@ fun DetailAgendaScreen(navController: NavHostController, id: Long? = null) {
                     if (id != null) {
                         DeleteAction {
                             showDialog = true
-//                                Hanya soft-delete
-                                viewModel.delete(id)
-                                navController.popBackStack()
+//                          Hanya soft-delete
+                            viewModel.delete(id)
+                            navController.popBackStack()
                         }
                     }
                 }
@@ -181,24 +174,26 @@ fun DetailAgendaScreen(navController: NavHostController, id: Long? = null) {
             selectedTypeOptionText = selectedTypeOptionText,
             onSelectedTypeChange = { selectedTypeOptionText = it },
             selectedDate = selectedDate,
-//            selectedTime = selectedTime,
+            onDateChange = { selectedDate = it },
+            selectedTime = selectedTime,
             onTimeChange = { selectedTime = it },
 
-        )
+            )
     }
 }
 
 @Composable
 fun FormDetailAgenda(
     modifier: Modifier = Modifier,
-    title: String, onTitleChange: (String) -> Unit = {},
-    description: String, onDescChange: (String) -> Unit = {},
+    title: String, onTitleChange: (String) -> Unit,
+    description: String, onDescChange: (String) -> Unit,
     agendaTypeOptions: List<String> = listOf(),
     selectedTypeOptionText: String,
-    onSelectedTypeChange: (String) -> Unit = {}, //Supaya bisa berubah nilai dropdown
+    onSelectedTypeChange: (String) -> Unit, //Supaya bisa berubah nilai dropdown
     selectedDate: Long? = null,
-//    selectedTime: String = "00:00",
-    onTimeChange: (String) -> Unit = {}
+    onDateChange: (Long?) -> Unit,
+    selectedTime: String,
+    onTimeChange: (String) -> Unit
 ) {
     var judulError by rememberSaveable { mutableStateOf(false) }
     var deskripsiError by remember { mutableStateOf(false) }
@@ -239,10 +234,11 @@ fun FormDetailAgenda(
             modifier = Modifier.fillMaxWidth()
         )
 
-//        Pilih selectedDate
-        DatePickerFieldToModal(
+//      Tanggal agenda
+        DatePickerField(
             selectedDate = selectedDate,
-            onDateChange = {
+            onDateChange = { millis ->
+                onDateChange(millis)
                 dateError = false
             },
             isError = dateError
@@ -250,9 +246,11 @@ fun FormDetailAgenda(
 
 //      Time picker
         SimpleTimeInput(
+            initialTime = selectedTime,
             onConfirm = onTimeChange,
             onDismiss = {},
-        )
+
+            )
 
 //      Deskripsi
         OutlinedTextField(
@@ -266,63 +264,66 @@ fun FormDetailAgenda(
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done
             ),
-            modifier = Modifier.fillMaxWidth(), maxLines = 5
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp), maxLines = 5
         )
-        }
     }
-//Date picker
+}
+
 @Composable
-fun DatePickerFieldToModal(
+fun DatePickerField(
     modifier: Modifier = Modifier,
     selectedDate: Long?,
-    onDateChange: (Long?) -> Unit = {},
-    isError: Boolean,
-
+    onDateChange: (Long?) -> Unit,
+    isError: Boolean
 ) {
-
     var showModal by remember { mutableStateOf(false) }
+    var textValue by rememberSaveable(selectedDate) {
+        mutableStateOf(selectedDate?.let {
+            convertMillisToDate(
+                it
+            )
+        } ?: "")
+    }
 
     OutlinedTextField(
-        value = selectedDate?.let { convertMillisToDate(it) } ?: "",
-        onValueChange = { },
-        label = { Text(text = stringResource(R.string.date_agenda)) },
-        isError = isError,
-        readOnly = true,
-        placeholder = { Text("MM/DD/YYYY") },
-        trailingIcon = {
-            Icon(Icons.Default.DateRange, contentDescription = stringResource(R.string.select_date))
+        value = textValue,
+        onValueChange = {
+            textValue = it
+            val parsed =
+                parseDateToMillis(it) //Ini berguna ketika pengguna mengetik tanggal(Date) -> diubah ke Long
+            onDateChange(parsed)
         },
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable { showModal = true }
-            .pointerInput(selectedDate) {
-                awaitEachGesture {
-                    // Modifier.clickable doesn't work for text fields, so we use Modifier.pointerInput
-                    // in the Initial pass to observe events before the text field consumes them
-                    // in the Main pass.
-                    awaitFirstDown(pass = PointerEventPass.Initial)
-                    val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
-                    if (upEvent != null) {
-                        showModal = true
-                    }
-                }
+        label = { Text(stringResource(R.string.date_agenda)) },
+        isError = isError,
+        placeholder = { Text("dd/MM/YYYY") },
+        trailingIcon = {
+            IconButton(onClick = { showModal = true }) {
+                Icon(
+                    Icons.Default.DateRange,
+                    contentDescription = stringResource(R.string.select_date)
+                )
             }
+        },
+        modifier = modifier.fillMaxWidth(),
+        singleLine = true
     )
 
     if (showModal) {
         DatePickerModal(
+            selectedDate = selectedDate ?: System.currentTimeMillis(),
             onDateSelected = {
                 onDateChange(it)
+                textValue = it?.let { convertMillisToDate(it) } ?: ""
                 showModal = false
             },
-            selectedDate = selectedDate ?: System.currentTimeMillis(),
             onDismiss = { showModal = false }
         )
     }
 }
 
 
-//Modal pilih tanggal
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(
@@ -336,7 +337,7 @@ fun DatePickerModal(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis ?: System.currentTimeMillis())
+                onDateSelected(datePickerState.selectedDateMillis)
                 onDismiss()
             }) {
                 Text("OK")
@@ -352,9 +353,18 @@ fun DatePickerModal(
     }
 }
 
-fun convertMillisToDate(millis: Long?): String {
-    if (millis == null) return ""
-    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+fun parseDateToMillis(dateStr: String): Long? {
+    return try {
+        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale("id", "ID"))
+        formatter.parse(dateStr)?.time
+    } catch (e: Exception) {
+        null
+    }
+}
+
+
+fun convertMillisToDate(millis: Long): String {
+    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale("id", "ID"))
     return formatter.format(Date(millis))
 }
 
@@ -363,38 +373,65 @@ fun convertMillisToDate(millis: Long?): String {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SimpleTimeInput(
+    initialTime: String?,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val currentTime = Calendar.getInstance()
+    val initialHourMinute = remember(initialTime) {
+        initialTime?.split(":")?.mapNotNull { it.toIntOrNull() }?.takeIf { it.size == 2 }
+            ?: listOf(
+                Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
+                Calendar.getInstance().get(Calendar.MINUTE)
+            )
+    }
+
+//    val currentTime = Calendar.getInstance()
 
     val timePickerState = rememberTimePickerState(
-        initialHour = currentTime.get(Calendar.HOUR_OF_DAY),
-        initialMinute = currentTime.get(Calendar.MINUTE),
+        initialHour = initialHourMinute[0],
+        initialMinute = initialHourMinute[1],
         is24Hour = true,
     )
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        TimeInput(
-            state = timePickerState,
-        )
+    val formattedTime = "%02d:%02d".format(timePickerState.hour, timePickerState.minute)
+//    var selectedTime by remember { mutableStateOf(initialTime) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TimeInput(state = timePickerState)
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.Center
         ) {
-            Button(onClick = onDismiss, modifier = Modifier.padding(end = 8.dp)) {
+            Button(
+                onClick = onDismiss,
+                modifier = Modifier.padding(end = 8.dp)
+            ) {
                 Text("Cancel")
             }
             Button(
                 onClick = {
-                    val formattedTime = "%02d:%02d".format(timePickerState.hour, timePickerState.minute)
                     onConfirm(formattedTime)
                     onDismiss()
-                          },
+                },
                 modifier = Modifier.padding(start = 8.dp)
             ) {
                 Text("OK")
             }
+        }
+        Column {
+            Text(
+                text = stringResource(R.string.time_agenda, formattedTime ?: ""),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+            )
         }
     }
 }
